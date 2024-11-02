@@ -1,13 +1,18 @@
 ---
-title: "Koko Hall"
+title: Koko Hall
+image: KokoMachuPicchu.png
+about:
+  id: hero-heading
+  template: jolla
+  links:
+    - icon: linkedin
+      text: LinkedIn
+      href: "https://www.linkedin.com/in/koko-hall-1bb20a80/"
+    - icon: mailbox 
+      text: E-mail
+      href: "mailto:lhall66@jh.edu"
 ---
 
-This is a Quarto website.
+Koko is a second-year ScM student at [Johns Hopkins Bloomberg School of Public Health, Department of Genetic Epidemiology](https://www.jhsph.edu/). She is also a graduate research assistant for the [Wendy Klag Center for Autism and Developmental Disabilities](https://www.wendyklagcenter.org/).
 
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
-
-```{r}
-1 + 1
-```
-
-Hello, my name is Koko!
+In her free time, she loves to hike, bake, indoor cycle, go to solidcore, and travel the world!

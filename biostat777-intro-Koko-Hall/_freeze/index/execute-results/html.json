@@ -1,8 +1,8 @@
 {
-  "hash": "6ff99d24d5b36488ead7d8e5e2d1dfb4",
+  "hash": "827a060a40c05e319bf89246ed28a7e3",
   "result": {
     "engine": "knitr",
-    "markdown": "---\ntitle: \"Koko Hall\"\n---\n\n\n\nThis is a Quarto website.\n\nTo learn more about Quarto websites visit <https://quarto.org/docs/websites>.\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\n1 + 1\n```\n\n::: {.cell-output .cell-output-stdout}\n\n```\n[1] 2\n```\n\n\n:::\n:::\n\n\n\nHello, my name is Koko!\n",
+    "markdown": "---\ntitle: \"Koko Hall\"\n---\n\n\n\n\nThis is a Quarto website.\n\nTo learn more about Quarto websites visit <https://quarto.org/docs/websites>.\n\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\n1 + 1\n```\n\n::: {.cell-output .cell-output-stdout}\n\n```\n[1] 2\n```\n\n\n:::\n:::\n\n\n\n\nHello, my name is Koko Hall!\n",
     "supporting": [],
     "filters": [
       "rmarkdown/pagebreak.lua"

@@ -1,3 +1,23 @@
 ---
 title: "Example Analysis"
+    
+format: html
 ---
+
+# Introduction
+
+::: {.columns}
+::: {.column width="30%"}
+![Caption for Image](your-image.jpg){ width=100% }
+:::
+
+::: {.column width="70%"}
+### Associate Professor of Biomedical Engineering and Biostatistics at Johns Hopkins
+
+Stephanie Hicks is an applied statistician working at the intersection of genomics and biomedical data science.
+
+Her research addresses computational challenges in genomics, epigenomics, and spatial transcriptomics to provide an improved understanding of human health and disease. She develops computational methods using statistical learning and implements these methods in open-source software for biomedical data analysis.
+
+Her research philosophy is problem-forward and solution-oriented, focusing on pressing needs in the field.
+:::
+:::
