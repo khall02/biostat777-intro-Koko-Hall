@@ -1,0 +1,11 @@
+---
+title: "Halloween Part2"
+---
+
+This is a Quarto website.
+
+To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+
+Koko is excited to learn a lot this term!! 
+
+Havea  great day!
