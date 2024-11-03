@@ -20,7 +20,61 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -111,12 +165,20 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#investigating-the-prevalance-of-depressive-symptoms-comparing-autistic-and-non-autistic-children-using-the-national-health-inverview-survey" id="toc-investigating-the-prevalance-of-depressive-symptoms-comparing-autistic-and-non-autistic-children-using-the-national-health-inverview-survey" class="nav-link active" data-scroll-target="#investigating-the-prevalance-of-depressive-symptoms-comparing-autistic-and-non-autistic-children-using-the-national-health-inverview-survey">Investigating the prevalance of depressive symptoms comparing autistic and non-autistic children, using the National Health Inverview Survey</a>
+  <ul class="collapse">
+  <li><a href="#intro" id="toc-intro" class="nav-link" data-scroll-target="#intro">Intro</a></li>
+  <li><a href="#data-wrangling" id="toc-data-wrangling" class="nav-link" data-scroll-target="#data-wrangling">Data Wrangling</a></li>
+  <li><a href="#analysis" id="toc-analysis" class="nav-link" data-scroll-target="#analysis">Analysis</a></li>
+  <li><a href="#plots" id="toc-plots" class="nav-link" data-scroll-target="#plots">Plots</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  <li><a href="#functions" id="toc-functions" class="nav-link" data-scroll-target="#functions">Functions</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content page-columns page-full" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
@@ -137,30 +199,434 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="introduction" class="level1">
-<h1>Introduction</h1>
-<div class="columns">
-<div class="column" style="width:30%;">
-<div class="quarto-figure quarto-figure-center">
+<section id="investigating-the-prevalance-of-depressive-symptoms-comparing-autistic-and-non-autistic-children-using-the-national-health-inverview-survey" class="level1 page-columns page-full">
+<h1>Investigating the prevalance of depressive symptoms comparing autistic and non-autistic children, using the National Health Inverview Survey</h1>
+<p><img src="NHIS.png" class="img-fluid" style="width:60.0%"></p>
+<section id="intro" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="intro">Intro</h3>
+<p><strong>Research objective</strong>: Using the National Health Interview Survey (NHIS), we will investigate whether autistic children have a higher prevalence of depressive symptoms compared to non-autistic children.</p>
+<p><strong>Intended audience</strong>: Mental health providers who care for pediatric and adolescent populations, including children with autism.</p>
+<p><strong>Data Source</strong>: The original data came from the <a href="https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/NHIS/2022/child22csv.zip">2022 National Health Interview Survey</a>, which is a cross-sectional household survey that monitors the health of children and adults in the United States population.</p>
+<p><strong>Data Dictionary</strong>: The link to the <a href="https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Dataset_Documentation/NHIS/2022/child-codebook.pdf">codeboook</a>.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Autism is a highly heterogeneous condition and is not a monolith. In this study, the categories of autism and non-autism are used to examine whether autistic individuals have a higher prevalence of depression compared to non-autistic individuals, aiming to better understand targeted mental health interventions for certain populations. I acknowledge that autism is a spectrum, and each individual has diverse phenotypic characteristics, strengths, and needs.</p>
+</div>
+</div>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>Full access to the NHIS wesbite can be found <a href="https://www.cdc.gov/nchs/nhis/index.htm">here</a>.</p>
+</div></div></section>
+<section id="data-wrangling" class="level3">
+<h3 class="anchored" data-anchor-id="data-wrangling">Data Wrangling</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+✔ purrr     1.0.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(haven)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>child22<span class="ot">&lt;-</span><span class="fu">read_csv</span>(<span class="st">"NHISchild22.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 7464 Columns: 432
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr   (1): HHX
+dbl (423): URBRRL, RATCAT_C, INCTCFLG_C, IMPINCFLG_C, PPSU, PSTRAT, HISPALLP...
+lgl   (8): OGFLGR_C, OGHDHPR_C, OPFLG_C, CHFLG_C, MAFLG_C, PRPLCOV2_C, EQWLK...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter for age greater than or equal to 5 years</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>agechild22<span class="ot">&lt;-</span>child22 <span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(AGEP_C<span class="sc">&gt;=</span><span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean data: Remove NAs and unknowns for specific columns</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>agechild22 <span class="ot">&lt;-</span> agechild22 <span class="sc">%&gt;%</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    SEX_C <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>),           <span class="co"># Male (1), Female (2)</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    ASDEV_C <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>),         <span class="co"># ASD diagnosis: Yes (1), No (2)</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    IDEV1_C <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>),         <span class="co"># Intellectual disability: Yes (1), No (2)</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    DEPFREQ_C <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)         <span class="co"># Depression frequency: 1-4 (depressed), 5 (not depressed)</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Recoding DEPFREQ_C to binary: 1 = depression, 0 = no depression</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>agechild22<span class="sc">$</span>DEPFREQ_C <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(agechild22<span class="sc">$</span>DEPFREQ_C <span class="sc">%in%</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Recoding ASDEV_C, SEX_C, and IDEV1_C to binary</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>agechild22 <span class="ot">&lt;-</span> agechild22 <span class="sc">%&gt;%</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">ASDEV_C =</span> <span class="fu">ifelse</span>(ASDEV_C <span class="sc">==</span> <span class="dv">2</span>, <span class="dv">0</span>, ASDEV_C),    <span class="co"># ASD: 1 = Yes, 0 = No</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">SEX_C =</span> <span class="fu">ifelse</span>(SEX_C <span class="sc">==</span> <span class="dv">2</span>, <span class="dv">0</span>, SEX_C),          <span class="co"># Sex: 1 = Male, 0 = Female</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">IDEV1_C =</span> <span class="fu">ifelse</span>(IDEV1_C <span class="sc">==</span> <span class="dv">2</span>, <span class="dv">0</span>, IDEV1_C)     <span class="co"># ID: 1 = Yes, 0 = No</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Recode race variable HISPALLP_C</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>agechild22<span class="sc">$</span>HISPALLP_C <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(agechild22<span class="sc">$</span>HISPALLP_C <span class="sc">%in%</span> <span class="dv">5</span><span class="sc">:</span><span class="dv">7</span>, <span class="dv">5</span>, agechild22<span class="sc">$</span>HISPALLP_C)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>agechild22<span class="sc">$</span>HISPALLP_C <span class="ot">&lt;-</span> <span class="fu">factor</span>(agechild22<span class="sc">$</span>HISPALLP_C)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>agechild22<span class="sc">$</span>HISPALLP_C <span class="ot">&lt;-</span> <span class="fu">relevel</span>(agechild22<span class="sc">$</span>HISPALLP_C, <span class="at">ref =</span> <span class="st">"2"</span>)  <span class="co"># Set reference level</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check tables for SEX_C and ASDEV_C</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(agechild22<span class="sc">$</span>SEX_C)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+   0    1 
+2659 2805 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(agechild22<span class="sc">$</span>ASDEV_C)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+   0    1 
+5254  210 </code></pre>
+</div>
+</div>
+<p><strong>Stratify by ASD</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>asd <span class="ot">&lt;-</span> agechild22 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(ASDEV_C <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>typ <span class="ot">&lt;-</span> agechild22 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(ASDEV_C <span class="sc">==</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Stratify by sex</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(asd<span class="sc">$</span>SEX_C)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  0   1 
+ 53 157 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(typ<span class="sc">$</span>SEX_C)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+   0    1 
+2606 2648 </code></pre>
+</div>
+</div>
+</section>
+<section id="analysis" class="level3">
+<h3 class="anchored" data-anchor-id="analysis">Analysis</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gtsummary)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(survey)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: grid</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: Matrix</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'Matrix'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:tidyr':
+
+    expand, pack, unpack</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: survival</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'survey'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:graphics':
+
+    dotchart</code></pre>
+</div>
+</div>
+<p><strong>Weighted survey</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>wChild22 <span class="ot">&lt;-</span> <span class="fu">svydesign</span>(<span class="at">ids =</span> <span class="sc">~</span>PPSU, <span class="at">weights =</span> <span class="sc">~</span>WTFA_C, <span class="at">data =</span> agechild22)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Three models were conducted to observe the relationship between ASD diagnosis and depressive symptoms. Model 1 was a crude, univariate logistic regression model. Model 2 was a multivariate logistic regression model that adjusted for sex, age, self-reported race, diagnosis of intellectual disability, and socioeconomic status (presented as a family income-to-poverty ratio). Model 3 was a multivariate logistic regression model that adjusted for sex, age, self-reported race, diagnosis of intellectual disability, socioeconomic status (SES), and included an interaction for sex and ASD diagnosis.</p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">svyglm</span>( DEPFREQ_C <span class="sc">~</span> ASDEV_C, <span class="at">design =</span> wChild22, </span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">family =</span> <span class="fu">quasibinomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>))</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+svyglm(formula = DEPFREQ_C ~ ASDEV_C, design = wChild22, family = quasibinomial(link = "logit"))
+
+Survey design:
+svydesign(ids = ~PPSU, weights = ~WTFA_C, data = agechild22)
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -0.72136    0.03526 -20.458  &lt; 2e-16 ***
+ASDEV_C      0.83452    0.15088   5.531 2.47e-07 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for quasibinomial family taken to be 1.000183)
+
+Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>tidy_model1 <span class="ot">&lt;-</span> <span class="fu">tidy</span>(model1, <span class="at">conf.int =</span> <span class="cn">TRUE</span>, <span class="at">exponentiate =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(tidy_model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 7
+  term        estimate std.error statistic  p.value conf.low conf.high
+  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+1 (Intercept)    0.486    0.0353    -20.5  6.96e-38    0.453     0.521
+2 ASDEV_C        2.30     0.151       5.53 2.47e- 7    1.71      3.11 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>model2<span class="ot">&lt;-</span><span class="fu">svyglm</span>(DEPFREQ_C <span class="sc">~</span> ASDEV_C <span class="sc">+</span> SEX_C<span class="sc">+</span> HISPALLP_C<span class="sc">+</span> IDEV1_C<span class="sc">+</span> AGEP_C<span class="sc">+</span>RATCAT_C, <span class="at">design=</span>wChild22, <span class="at">family =</span> <span class="fu">quasibinomial</span>(<span class="at">link=</span> <span class="st">"logit"</span>))</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>tidy_model2 <span class="ot">&lt;-</span> <span class="fu">tidy</span>(model2, <span class="at">conf.int =</span> <span class="cn">TRUE</span>, <span class="at">exponentiate =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(tidy_model2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 7
+   term        estimate std.error statistic  p.value conf.low conf.high
+   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+ 1 (Intercept)    0.201    0.160    -10.0   1.80e-16    0.146     0.277
+ 2 ASDEV_C        2.41     0.170      5.15  1.40e- 6    1.72      3.38 
+ 3 SEX_C          0.692    0.0791    -4.66  1.04e- 5    0.591     0.809
+ 4 HISPALLP_C1    0.606    0.103     -4.85  4.84e- 6    0.494     0.744
+ 5 HISPALLP_C3    0.722    0.134     -2.44  1.67e- 2    0.553     0.941
+ 6 HISPALLP_C4    0.779    0.128     -1.95  5.40e- 2    0.604     1.00 
+ 7 HISPALLP_C5    1.05     0.151      0.322 7.48e- 1    0.778     1.42 
+ 8 IDEV1_C        1.65     0.211      2.36  2.04e- 2    1.08      2.51 
+ 9 AGEP_C         1.12     0.0100    11.1   7.13e-19    1.10      1.14 
+10 RATCAT_C       0.995    0.0105    -0.476 6.35e- 1    0.975     1.02 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>model3<span class="ot">&lt;-</span><span class="fu">svyglm</span>(DEPFREQ_C <span class="sc">~</span> ASDEV_C <span class="sc">+</span> SEX_C<span class="sc">+</span> HISPALLP_C<span class="sc">+</span> IDEV1_C<span class="sc">+</span> AGEP_C<span class="sc">+</span>RATCAT_C<span class="sc">+</span>ASDEV_C<span class="sc">*</span>SEX_C, <span class="at">design=</span>wChild22, <span class="at">family =</span> <span class="fu">quasibinomial</span>(<span class="at">link=</span> <span class="st">"logit"</span>))</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>tidy_model3<span class="ot">&lt;-</span><span class="fu">tidy</span>(model3, <span class="at">conf.int =</span> <span class="cn">TRUE</span>, <span class="at">exponentiate =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(tidy_model3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 11 × 7
+   term          estimate std.error statistic  p.value conf.low conf.high
+   &lt;chr&gt;            &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+ 1 (Intercept)      0.202    0.160    -10.0   1.95e-16    0.147     0.277
+ 2 ASDEV_C          1.41     0.362      0.947 3.46e- 1    0.686     2.89 
+ 3 SEX_C            0.675    0.0835    -4.70  9.06e- 6    0.572     0.797
+ 4 HISPALLP_C1      0.606    0.103     -4.84  5.19e- 6    0.494     0.745
+ 5 HISPALLP_C3      0.723    0.134     -2.42  1.74e- 2    0.555     0.943
+ 6 HISPALLP_C4      0.779    0.127     -1.96  5.33e- 2    0.605     1.00 
+ 7 HISPALLP_C5      1.05     0.151      0.292 7.71e- 1    0.775     1.41 
+ 8 IDEV1_C          1.70     0.219      2.41  1.81e- 2    1.10      2.62 
+ 9 AGEP_C           1.12     0.0101    11.1   9.08e-19    1.10      1.14 
+10 RATCAT_C         0.996    0.0106    -0.422 6.74e- 1    0.975     1.02 
+11 ASDEV_C:SEX_C    2.04     0.398      1.79  7.69e- 2    0.925     4.49 </code></pre>
+</div>
+</div>
+<p><strong>AIC</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">AIC</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      eff.p         AIC    deltabar 
+   1.181965 6935.900763    1.181965 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">AIC</span>(model2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      eff.p         AIC    deltabar 
+  13.260931 6666.753169    1.473437 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">AIC</span>(model3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      eff.p         AIC    deltabar 
+  14.725318 6665.083960    1.472532 </code></pre>
+</div>
+</div>
+</section>
+<section id="plots" class="level3">
+<h3 class="anchored" data-anchor-id="plots">Plots</h3>
+<p><strong>Table 1</strong> <img src="Table1.png" class="img-fluid"></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate percentages for each group</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>agechild22_percent <span class="ot">&lt;-</span> agechild22 <span class="sc">%&gt;%</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(ASDEV_C, SEX_C, DEPFREQ_C) <span class="sc">%&gt;%</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">percentage =</span> count <span class="sc">/</span> <span class="fu">sum</span>(count) <span class="sc">*</span> <span class="dv">100</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'ASDEV_C', 'SEX_C'. You can override using
+the `.groups` argument.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(agechild22_percent, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">as.factor</span>(DEPFREQ_C), <span class="at">y =</span> percentage, <span class="at">fill =</span> <span class="fu">as.factor</span>(DEPFREQ_C))) <span class="sc">+</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">position =</span> <span class="st">"dodge"</span>) <span class="sc">+</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> ASDEV_C <span class="sc">+</span> SEX_C, <span class="at">labeller =</span> <span class="fu">labeller</span>(<span class="at">ASDEV_C =</span> <span class="fu">c</span>(<span class="st">"0"</span> <span class="ot">=</span> <span class="st">"No Autism"</span>, <span class="st">"1"</span> <span class="ot">=</span> <span class="st">"Autism"</span>), <span class="at">SEX_C =</span> <span class="fu">c</span>(<span class="st">"0"</span> <span class="ot">=</span> <span class="st">"Female"</span>, <span class="st">"1"</span> <span class="ot">=</span> <span class="st">"Male"</span>))) <span class="sc">+</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"0"</span> <span class="ot">=</span> <span class="st">"blue"</span>, <span class="st">"1"</span> <span class="ot">=</span> <span class="st">"turquoise"</span>)) <span class="sc">+</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_discrete</span>(<span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"0"</span> <span class="ot">=</span> <span class="st">"No Depression"</span>, <span class="st">"1"</span> <span class="ot">=</span> <span class="st">"Depression"</span>)) <span class="sc">+</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Depression Status"</span>,</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Percentage (%)"</span>,</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Depression Status by Autism Diagnosis and Sex"</span>,</span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"There appears to be a difference in depression status between males and females in </span></span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a><span class="st">those without autism. Females seem to have a higher percentage of depression, compared </span></span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a><span class="st">to males, indicating potential sex differences. Among individuals with autism, the </span></span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a><span class="st">depression status is similar between males and females."</span>,</span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Graph created by Koko Hall"</span></span>
+<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>), <span class="at">legend.position =</span> <span class="st">"none"</span>)  <span class="co"># Removes legend</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
 <figure class="figure">
-<p><img src="your-image.jpg" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption>Caption for Image</figcaption>
+<p><img src="ExampleAnalysis_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
-</div><div class="column" style="width:70%;">
-<section id="associate-professor-of-biomedical-engineering-and-biostatistics-at-johns-hopkins" class="level3">
-<h3 class="anchored" data-anchor-id="associate-professor-of-biomedical-engineering-and-biostatistics-at-johns-hopkins">Associate Professor of Biomedical Engineering and Biostatistics at Johns Hopkins</h3>
-<p>Stephanie Hicks is an applied statistician working at the intersection of genomics and biomedical data science.</p>
-<p>Her research addresses computational challenges in genomics, epigenomics, and spatial transcriptomics to provide an improved understanding of human health and disease. She develops computational methods using statistical learning and implements these methods in open-source software for biomedical data analysis.</p>
-<p>Her research philosophy is problem-forward and solution-oriented, focusing on pressing needs in the field.</p>
-</section>
 </div>
 </div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter out the intercept and unwanted terms</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>filtered_model3 <span class="ot">&lt;-</span> tidy_model3 <span class="sc">%&gt;%</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">!=</span> <span class="st">"(Intercept)"</span> <span class="sc">&amp;</span> <span class="sc">!</span>term <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"HISPALLP_C3"</span>, <span class="st">"HISPALLP_C4"</span>, <span class="st">"HISPALLP_C5"</span>))</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot with relabeled terms and filtered terms</span></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(filtered_model3, <span class="fu">aes</span>(<span class="at">x =</span> term, <span class="at">y =</span> estimate)) <span class="sc">+</span></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">color =</span> <span class="st">"blue"</span>) <span class="sc">+</span></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> conf.low, <span class="at">ymax =</span> conf.high), <span class="at">width =</span> <span class="fl">0.2</span>, <span class="at">color =</span> <span class="st">"blue"</span>) <span class="sc">+</span></span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_discrete</span>(<span class="at">labels =</span> <span class="fu">c</span>(</span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SEX_C"</span> <span class="ot">=</span> <span class="st">"Sex"</span>,</span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"RATCAT_C"</span> <span class="ot">=</span> <span class="st">"Race"</span>,</span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"IDEV1_C"</span> <span class="ot">=</span> <span class="st">"Intellectual Disability"</span>,</span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"HISPALLP_C1"</span> <span class="ot">=</span> <span class="st">"Hispanic"</span>,</span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ASDEV_C:SEX_C"</span> <span class="ot">=</span> <span class="st">"ASD * Sex"</span>,</span>
+<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ASDEV_C"</span> <span class="ot">=</span> <span class="st">"ASD"</span>,</span>
+<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"AGEP_C"</span> <span class="ot">=</span> <span class="st">"Age"</span></span>
+<span id="cb44-18"><a href="#cb44-18" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">+</span></span>
+<span id="cb44-19"><a href="#cb44-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb44-20"><a href="#cb44-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Predictor"</span>,</span>
+<span id="cb44-21"><a href="#cb44-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Odds Ratio (95% CI)"</span>,</span>
+<span id="cb44-22"><a href="#cb44-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Model 3 Effect Estimates for Depression Odds"</span>,</span>
+<span id="cb44-23"><a href="#cb44-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span><span class="st">"The strongest predictor appears to be the interaction between autism and sex,</span></span>
+<span id="cb44-24"><a href="#cb44-24" aria-hidden="true" tabindex="-1"></a><span class="st">suggesting that the combined effect of these factors may significantly impact</span></span>
+<span id="cb44-25"><a href="#cb44-25" aria-hidden="true" tabindex="-1"></a><span class="st">depression odds. However, this effect estimate has a very wide confidence interval. </span></span>
+<span id="cb44-26"><a href="#cb44-26" aria-hidden="true" tabindex="-1"></a><span class="st">Autism diagnosisand intellectual disability also appears positively associated with </span></span>
+<span id="cb44-27"><a href="#cb44-27" aria-hidden="true" tabindex="-1"></a><span class="st">depression. Meanwhile, male sex and Hispanic ethnicity were associated with lower </span></span>
+<span id="cb44-28"><a href="#cb44-28" aria-hidden="true" tabindex="-1"></a><span class="st">odds of depression."</span>,</span>
+<span id="cb44-29"><a href="#cb44-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption=</span> <span class="st">"Graph created by Koko Hall"</span></span>
+<span id="cb44-30"><a href="#cb44-30" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb44-31"><a href="#cb44-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ExampleAnalysis_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>model3_residuals <span class="ot">&lt;-</span> <span class="fu">residuals</span>(model3, <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">data.frame</span>(<span class="at">residuals =</span> model3_residuals), <span class="fu">aes</span>(<span class="at">x =</span> residuals)) <span class="sc">+</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">fill =</span> <span class="st">"turquoise"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Residuals"</span>, </span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Density"</span>, </span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Density of Residuals for Model 3"</span>,</span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle=</span> <span class="st">"The plot shows two peaks, indicating a bimodal distrubition. This suggests </span></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a><span class="st">that the residuals are not symmetrically distrubuted around zero, implying that the model </span></span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a><span class="st">has different levels of error. The distrubution of the data may also suggest that Model 3 </span></span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a><span class="st">does not capture the structure of the data fully."</span>,</span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption=</span> <span class="st">"Plot created by Koko Hall"</span></span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ExampleAnalysis_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="summary" class="level3">
+<h3 class="anchored" data-anchor-id="summary">Summary</h3>
+<p>In this study, participants had a mean age of 11.3 years, with equal representation of males and females overall, though males were overrepresented in the ASD group (75%), consistent with national trends. Regression analyses indicated that children with ASD had significantly higher odds of depressive symptoms in crude and adjusted models. However, after including an interaction between sex and ASD, this association weakened and became non-significant. Additionally, male sex and Hispanic ethnicity were associated with lower odds of depressive symptoms, while older age was linked to higher odds. The residuals from Model 3 displayed a bimodal distribution, suggesting that this model may not fully capture the structure of the data and may warrant further investigation.</p>
+</section>
+<section id="functions" class="level3">
+<h3 class="anchored" data-anchor-id="functions">Functions</h3>
+<p><strong>dplyr</strong></p>
+<ul>
+<li>filter(): Used for subsetting data based on various conditions (e.g., age, sex, autism diagnosis, intellectual disability, and depression frequency).</li>
+<li>mutate(): Used to create new variables or modify existing ones, such as recoding variables (ASDEV_C, SEX_C, IDEV1_C, and DEPFREQ_C).</li>
+<li>group_by(): Grouped data by specific variables (e.g., ASDEV_C, SEX_C, DEPFREQ_C) for further summary calculations.</li>
+<li>summarise(): Calculated the count for each subgroup.</li>
+<li>ungroup(): Removed groupings after calculations, ensuring the dataset is no longer grouped for subsequent operations.</li>
+</ul>
+<p><strong>ggplot2</strong></p>
+<ul>
+<li>ggplot(): Initiated the plotting process.</li>
+<li>aes(): Mapped data variables to the axes, colors, and other aesthetics.</li>
+<li>geom_bar(): Created bar charts to visualize categorical data distributions.</li>
+<li>facet_wrap(): Used to create facet grids by ASDEV_C and SEX_C for comparison.</li>
+<li>scale_fill_manual(): Customized color fills for bars in the bar chart.</li>
+<li>scale_x_discrete(): Modified x-axis labels for discrete variables to improve readability.</li>
+<li>labs(): Added titles, subtitles, x/y-axis labels, and captions for context and clarity in plots.</li>
+<li>theme_minimal(): Applied minimal styling to plots for a clean, modern look.</li>
+<li>theme(): Further customized plot aesthetics, such as centering titles or removing legends.</li>
+<li>geom_point(): Plotted points in effect estimate visualization for each model term.</li>
+<li>geom_errorbar(): Added error bars to indicate confidence intervals for model terms.</li>
+<li>coord_flip(): Flipped coordinates, making the plot horizontal.</li>
+<li>geom_density(): Created a density plot for residuals to assess distribution.</li>
+</ul>
+
 
 
 </section>
+</section>
 
-</main> <!-- /main -->
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-RN26" class="csl-entry" role="listitem">
+Baio, J., L. Wiggins, D. L. Christensen, M. J. Maenner, J. Daniels, Z. Warren, M. Kurzius-Spencer, et al. 2018. <span>“Prevalence of Autism Spectrum Disorder Among Children Aged 8 Years - Autism and Developmental Disabilities Monitoring Network, 11 Sites, United States, 2014.”</span> Journal Article. <em>MMWR Surveill Summ</em> 67 (6): 1–23. <a href="https://doi.org/10.15585/mmwr.ss6706a1">https://doi.org/10.15585/mmwr.ss6706a1</a>.
+</div>
+<div id="ref-RN28" class="csl-entry" role="listitem">
+Health, National Center for. 2022. <span>“National Health Interview Survey [Public Use Data File and Documentation.].”</span> Online Database. CDC.
+</div>
+<div id="ref-RN27" class="csl-entry" role="listitem">
+Loomes, R., L. Hull, and W. P. L. Mandy. 2017. <span>“What Is the Male-to-Female Ratio in Autism Spectrum Disorder? A Systematic Review and Meta-Analysis.”</span> Journal Article. <em>J Am Acad Child Adolesc Psychiatry</em> 56 (6): 466–74. <a href="https://doi.org/10.1016/j.jaac.2017.03.013">https://doi.org/10.1016/j.jaac.2017.03.013</a>.
+</div>
+</div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

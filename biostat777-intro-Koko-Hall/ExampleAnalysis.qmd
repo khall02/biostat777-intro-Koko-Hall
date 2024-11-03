@@ -1,23 +1,264 @@
 ---
 title: "Example Analysis"
-    
 format: html
+bibliography: Bibliography.bib 
+nocite: '@*'  
 ---
 
-# Introduction
+# Investigating the prevalance of depressive symptoms comparing autistic and non-autistic children, using the National Health Inverview Survey
 
-::: {.columns}
-::: {.column width="30%"}
-![Caption for Image](your-image.jpg){ width=100% }
+
+![](NHIS.png){width="60%"}
+
+
+### Intro
+
+**Research objective**: Using the National Health Interview Survey (NHIS), we will investigate whether autistic children have a higher prevalence of depressive symptoms compared to non-autistic children. 
+
+**Intended audience**: Mental health providers who care for pediatric and adolescent populations, including children with autism.  
+
+**Data Source**: The original data came from the [2022 National Health Interview Survey](https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/NHIS/2022/child22csv.zip), which is a cross-sectional household survey that monitors the health of children and adults in the United States population. 
+
+**Data Dictionary**: The link to the [codeboook](https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Dataset_Documentation/NHIS/2022/child-codebook.pdf). 
+
+::: {.callout-important}
+Autism is a highly heterogeneous condition and is not a monolith. In this study, the categories of autism and non-autism are used to examine whether autistic individuals have a higher prevalence of depression compared to non-autistic individuals, aiming to better understand targeted mental health interventions for certain populations. I acknowledge that autism is a spectrum, and each individual has diverse phenotypic characteristics, strengths, and needs.
 :::
 
-::: {.column width="70%"}
-### Associate Professor of Biomedical Engineering and Biostatistics at Johns Hopkins
-
-Stephanie Hicks is an applied statistician working at the intersection of genomics and biomedical data science.
-
-Her research addresses computational challenges in genomics, epigenomics, and spatial transcriptomics to provide an improved understanding of human health and disease. She develops computational methods using statistical learning and implements these methods in open-source software for biomedical data analysis.
-
-Her research philosophy is problem-forward and solution-oriented, focusing on pressing needs in the field.
+::: {.column-margin}
+Full access to the NHIS wesbite can be found [here](https://www.cdc.gov/nchs/nhis/index.htm).
 :::
+
+### Data Wrangling
+
+```{r}
+library(tidyverse)
+library(haven)
+child22<-read_csv("NHISchild22.csv")
+```
+```{r}
+# Filter for age greater than or equal to 5 years
+agechild22<-child22 %>%
+  filter(AGEP_C>=5)
+```
+
+```{r}
+# Clean data: Remove NAs and unknowns for specific columns
+agechild22 <- agechild22 %>%
+  filter(
+    SEX_C %in% c(1, 2),           # Male (1), Female (2)
+    ASDEV_C %in% c(1, 2),         # ASD diagnosis: Yes (1), No (2)
+    IDEV1_C %in% c(1, 2),         # Intellectual disability: Yes (1), No (2)
+    DEPFREQ_C %in% c(1:5)         # Depression frequency: 1-4 (depressed), 5 (not depressed)
+  )
+
+# Recoding DEPFREQ_C to binary: 1 = depression, 0 = no depression
+agechild22$DEPFREQ_C <- ifelse(agechild22$DEPFREQ_C %in% 1:4, 1, 0)
+
+# Recoding ASDEV_C, SEX_C, and IDEV1_C to binary
+agechild22 <- agechild22 %>%
+  mutate(
+    ASDEV_C = ifelse(ASDEV_C == 2, 0, ASDEV_C),    # ASD: 1 = Yes, 0 = No
+    SEX_C = ifelse(SEX_C == 2, 0, SEX_C),          # Sex: 1 = Male, 0 = Female
+    IDEV1_C = ifelse(IDEV1_C == 2, 0, IDEV1_C)     # ID: 1 = Yes, 0 = No
+  )
+
+```
+
+```{r}
+# Recode race variable HISPALLP_C
+agechild22$HISPALLP_C <- ifelse(agechild22$HISPALLP_C %in% 5:7, 5, agechild22$HISPALLP_C)
+agechild22$HISPALLP_C <- factor(agechild22$HISPALLP_C)
+agechild22$HISPALLP_C <- relevel(agechild22$HISPALLP_C, ref = "2")  # Set reference level
+```
+
+
+```{r}
+# Check tables for SEX_C and ASDEV_C
+table(agechild22$SEX_C)
+table(agechild22$ASDEV_C)
+```
+
+**Stratify by ASD**
+
+```{r}
+asd <- agechild22 %>% filter(ASDEV_C == 1)
+typ <- agechild22 %>% filter(ASDEV_C == 0)
+```
+
+**Stratify by sex**
+```{r}
+table(asd$SEX_C)
+table(typ$SEX_C)
+```
+### Analysis
+
+```{r}
+library(gtsummary)
+library(survey)
+```
+
+**Weighted survey**
+```{r}
+wChild22 <- svydesign(ids = ~PPSU, weights = ~WTFA_C, data = agechild22)
+```
+
+
+::: {.callout-note}
+Three models were conducted to observe the relationship between ASD diagnosis and depressive symptoms. Model 1 was a crude, univariate logistic regression model. Model 2 was a multivariate logistic regression model that adjusted for sex, age, self-reported race, diagnosis of intellectual disability, and socioeconomic status (presented as a family income-to-poverty ratio). Model 3 was a multivariate logistic regression model that adjusted for sex, age, self-reported race, diagnosis of intellectual disability, socioeconomic status (SES), and included an interaction for sex and ASD diagnosis.
 :::
+
+
+```{r}
+library(survey)
+library(broom)
+
+model1 <- svyglm( DEPFREQ_C ~ ASDEV_C, design = wChild22, 
+                family = quasibinomial(link = "logit"))
+summary(model1)
+
+tidy_model1 <- tidy(model1, conf.int = TRUE, exponentiate = TRUE)
+print(tidy_model1)
+
+```
+
+```{r}
+model2<-svyglm(DEPFREQ_C ~ ASDEV_C + SEX_C+ HISPALLP_C+ IDEV1_C+ AGEP_C+RATCAT_C, design=wChild22, family = quasibinomial(link= "logit"))
+
+tidy_model2 <- tidy(model2, conf.int = TRUE, exponentiate = TRUE)
+print(tidy_model2)
+
+```
+
+```{r}
+
+model3<-svyglm(DEPFREQ_C ~ ASDEV_C + SEX_C+ HISPALLP_C+ IDEV1_C+ AGEP_C+RATCAT_C+ASDEV_C*SEX_C, design=wChild22, family = quasibinomial(link= "logit"))
+
+tidy_model3<-tidy(model3, conf.int = TRUE, exponentiate = TRUE)
+print(tidy_model3)
+```
+
+**AIC**
+```{r}
+AIC(model1)
+AIC(model2)
+AIC(model3)
+```
+
+
+### Plots
+
+**Table 1**
+![](Table1.png)
+
+
+```{r}
+
+# Calculate percentages for each group
+agechild22_percent <- agechild22 %>%
+  group_by(ASDEV_C, SEX_C, DEPFREQ_C) %>%
+  summarise(count = n()) %>%
+  mutate(percentage = count / sum(count) * 100) %>%
+  ungroup()
+
+ggplot(agechild22_percent, aes(x = as.factor(DEPFREQ_C), y = percentage, fill = as.factor(DEPFREQ_C))) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(~ ASDEV_C + SEX_C, labeller = labeller(ASDEV_C = c("0" = "No Autism", "1" = "Autism"), SEX_C = c("0" = "Female", "1" = "Male"))) +
+  scale_fill_manual(values = c("0" = "blue", "1" = "turquoise")) +
+  scale_x_discrete(labels = c("0" = "No Depression", "1" = "Depression")) +
+  labs(
+    x = "Depression Status",
+    y = "Percentage (%)",
+    title = "Depression Status by Autism Diagnosis and Sex",
+    subtitle = "There appears to be a difference in depression status between males and females in 
+those without autism. Females seem to have a higher percentage of depression, compared 
+to males, indicating potential sex differences. Among individuals with autism, the 
+depression status is similar between males and females.",
+    caption = "Graph created by Koko Hall"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5), legend.position = "none")  # Removes legend
+
+
+```
+```{r}
+# Filter out the intercept and unwanted terms
+filtered_model3 <- tidy_model3 %>%
+  filter(term != "(Intercept)" & !term %in% c("HISPALLP_C3", "HISPALLP_C4", "HISPALLP_C5"))
+
+# Plot with relabeled terms and filtered terms
+ggplot(filtered_model3, aes(x = term, y = estimate)) +
+  geom_point(size = 3, color = "blue") +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.2, color = "blue") +
+  coord_flip() +
+  scale_x_discrete(labels = c(
+    "SEX_C" = "Sex",
+    "RATCAT_C" = "Race",
+    "IDEV1_C" = "Intellectual Disability",
+    "HISPALLP_C1" = "Hispanic",
+    "ASDEV_C:SEX_C" = "ASD * Sex",
+    "ASDEV_C" = "ASD",
+    "AGEP_C" = "Age"
+  )) +
+  labs(
+    x = "Predictor",
+    y = "Odds Ratio (95% CI)",
+    title = "Model 3 Effect Estimates for Depression Odds",
+    subtitle ="The strongest predictor appears to be the interaction between autism and sex,
+suggesting that the combined effect of these factors may significantly impact
+depression odds. However, this effect estimate has a very wide confidence interval. 
+Autism diagnosisand intellectual disability also appears positively associated with 
+depression. Meanwhile, male sex and Hispanic ethnicity were associated with lower 
+odds of depression.",
+    caption= "Graph created by Koko Hall"
+  ) +
+  theme_minimal()
+
+```
+
+```{r}
+model3_residuals <- residuals(model3, type = "response")
+ggplot(data.frame(residuals = model3_residuals), aes(x = residuals)) +
+  geom_density(fill = "turquoise", alpha = 0.5) +
+  labs(
+    x = "Residuals", 
+    y = "Density", 
+    title = "Density of Residuals for Model 3",
+    subtitle= "The plot shows two peaks, indicating a bimodal distrubition. This suggests 
+that the residuals are not symmetrically distrubuted around zero, implying that the model 
+has different levels of error. The distrubution of the data may also suggest that Model 3 
+does not capture the structure of the data fully.",
+  caption= "Plot created by Koko Hall"
+    ) +
+  theme_minimal()
+```
+### Summary 
+In this study, participants had a mean age of 11.3 years, with equal representation of males and females overall, though males were overrepresented in the ASD group (75%), consistent with national trends. Regression analyses indicated that children with ASD had significantly higher odds of depressive symptoms in crude and adjusted models. However, after including an interaction between sex and ASD, this association weakened and became non-significant. Additionally, male sex and Hispanic ethnicity were associated with lower odds of depressive symptoms, while older age was linked to higher odds. The residuals from Model 3 displayed a bimodal distribution, suggesting that this model may not fully capture the structure of the data and may warrant further investigation.
+
+### Functions
+**dplyr**
+
+  - filter(): Used for subsetting data based on various conditions (e.g., age, sex, autism diagnosis, intellectual disability, and depression frequency).
+  - mutate(): Used to create new variables or modify existing ones, such as recoding variables (ASDEV_C, SEX_C, IDEV1_C, and DEPFREQ_C).
+  - group_by(): Grouped data by specific variables (e.g., ASDEV_C, SEX_C, DEPFREQ_C) for further summary calculations.
+  - summarise(): Calculated the count for each subgroup.
+  - ungroup(): Removed groupings after calculations, ensuring the dataset is no longer grouped for subsequent operations.
+
+**ggplot2**
+
+- ggplot(): Initiated the plotting process.
+- aes(): Mapped data variables to the axes, colors, and other aesthetics.
+- geom_bar(): Created bar charts to visualize categorical data distributions.
+- facet_wrap(): Used to create facet grids by ASDEV_C and SEX_C for comparison.
+- scale_fill_manual(): Customized color fills for bars in the bar chart.
+- scale_x_discrete(): Modified x-axis labels for discrete variables to improve readability.
+- labs(): Added titles, subtitles, x/y-axis labels, and captions for context and clarity in plots.
+- theme_minimal(): Applied minimal styling to plots for a clean, modern look.
+- theme(): Further customized plot aesthetics, such as centering titles or removing legends.
+- geom_point(): Plotted points in effect estimate visualization for each model term.
+- geom_errorbar(): Added error bars to indicate confidence intervals for model terms.
+- coord_flip(): Flipped coordinates, making the plot horizontal.
+- geom_density(): Created a density plot for residuals to assess distribution.
+
+
+
