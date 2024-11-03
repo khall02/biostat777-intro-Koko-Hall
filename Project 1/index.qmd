@@ -29,6 +29,7 @@ The TAs will grade the contents in the GitHub repo by cloning the repo and check
 
 # Part 1
 
+
 1. Read this blogpost titled [Building a brand as a scientist](https://www.stephaniehicks.com/blog/building-a-brand-as-a-scientist). 
 2. Reflect on the questions in the "Defining your brand" section. 
 3. Write two paragraphs (4-6 sentences) max here answering one (or more) of the questions asked in the section above.
